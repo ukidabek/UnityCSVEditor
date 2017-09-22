@@ -23,6 +23,7 @@ namespace CSVEditor
         {
             string[] pathPart = path.Split(CSVEditorWindowStrings.PATH_SEPARATORS, StringSplitOptions.None);
             FileName = pathPart[pathPart.Length - 1];
+
             if (File.Exists(path))
             {
                 StreamReader streamReader = new StreamReader(path);
