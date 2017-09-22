@@ -9,6 +9,7 @@ namespace CSVEditor
 {
     internal class CSVFileParser
     {
+        public string FileName { get; private set; }
         public int ColumnsCount { get; private set; }
         public int RowsCount { get { return _rows.Count; } }
 
@@ -20,7 +21,9 @@ namespace CSVEditor
 
         public void FromCSV(string path)
         {
-            if(File.Exists(path))
+            string[] pathPart = path.Split(CSVEditorWindowStrings.PATH_SEPARATORS, StringSplitOptions.None);
+            FileName = pathPart[pathPart.Length - 1];
+            if (File.Exists(path))
             {
                 StreamReader streamReader = new StreamReader(path);
 

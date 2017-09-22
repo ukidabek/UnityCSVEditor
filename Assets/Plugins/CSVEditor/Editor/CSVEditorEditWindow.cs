@@ -17,6 +17,9 @@ namespace CSVEditor
         public CSVEditorEditWindow(CSVFileParser parser)
         {
             _parser = parser;
+            GUIContent titleContent = new GUIContent(_parser.FileName);
+
+            this.titleContent = titleContent;
         }
 
         private void OnGUI()

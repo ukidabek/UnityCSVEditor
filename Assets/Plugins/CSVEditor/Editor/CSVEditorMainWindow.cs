@@ -63,6 +63,10 @@ namespace CSVEditor
             else
             {
                 _recentlyOpenedFiles.Insert(0, path);
+                if(_recentlyOpenedFiles.Count == 10)
+                {
+                    _recentlyOpenedFiles.RemoveAt(_recentlyOpenedFiles.Count - 1);
+                }
             }
 
             _parser.FromCSV(path);

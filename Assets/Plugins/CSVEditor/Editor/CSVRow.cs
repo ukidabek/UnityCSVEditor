@@ -36,12 +36,10 @@ namespace CSVEditor
 
         public void EditRow(Rect rowRect, int index)
         {
-            GUI.Label(rowRect, index.ToString());
-            rowRect.x += 30;
             for (int i = 0; i < _columns.Count; i++)
             {
                 Rect newRect = new Rect();
-                newRect.x = 30 + rowRect.width * i;
+                newRect.x = rowRect.width * i;
                 newRect.y = rowRect.y;
                 newRect.width = rowRect.width;
                 newRect.height = rowRect.height;
