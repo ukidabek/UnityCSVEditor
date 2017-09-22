@@ -17,7 +17,12 @@ namespace CSVEditor
 
         public void EditValue(Rect rowRect)
         {
-            _value = GUI.TextArea(rowRect, _value);
+            _value = EditorGUI.TextArea(rowRect, _value);
+        }
+
+        public string GetValue()
+        {
+            return _value;
         }
     }
 }

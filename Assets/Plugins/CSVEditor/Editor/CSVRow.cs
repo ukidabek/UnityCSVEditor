@@ -50,5 +50,23 @@ namespace CSVEditor
             }
         }
 
+        public override string ToString()
+        {
+            string line = string.Empty;
+
+            for (int i = 0; i < _columns.Count; i++)
+            {
+                string value = _columns[i].GetValue();
+                line += string.Format("{0}{1}", value, CSVEditorWindowStrings.COLUMN_SEPARATORS[0]);
+
+                if(i == _columns.Count -1)
+                {
+                    line = string.Format("{0}{1}", line, CSVEditorWindowStrings.ROW_SEPARATORS[0]);
+                }
+            }
+
+            return line;
+        }
+
     }
 }
