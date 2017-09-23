@@ -21,7 +21,7 @@ namespace CSVEditor
 
         public void FromCSV(string path)
         {
-            string[] pathPart = path.Split(CSVEditorWindowStrings.PATH_SEPARATORS, StringSplitOptions.None);
+            string[] pathPart = path.Split(CSVEditorWindowConsts.PATH_SEPARATORS, StringSplitOptions.None);
             FileName = pathPart[pathPart.Length - 1];
 
             if (File.Exists(path))
@@ -35,7 +35,7 @@ namespace CSVEditor
 
                     string line = streamReader.ReadLine();
 
-                    string[] columns = line.Split(CSVEditorWindowStrings.COLUMN_SEPARATORS, StringSplitOptions.None);
+                    string[] columns = line.Split(CSVEditorWindowConsts.COLUMN_SEPARATORS, StringSplitOptions.None);
 
                     CSVRow newRow = new CSVRow(columns);
 

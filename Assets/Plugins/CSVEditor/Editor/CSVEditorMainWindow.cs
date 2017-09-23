@@ -18,7 +18,7 @@ namespace CSVEditor
         private static void Init()
         {
             CSVEditorMainWindow window = (CSVEditorMainWindow)GetWindow(typeof(CSVEditorMainWindow));
-            GUIContent titleContent = new GUIContent(CSVEditorWindowStrings.CSV_EDITOR_WINDOW_TITLE);
+            GUIContent titleContent = new GUIContent(CSVEditorWindowConsts.CSV_EDITOR_WINDOW_TITLE);
 
             window.titleContent = titleContent;
             window.Show();
@@ -77,7 +77,7 @@ namespace CSVEditor
 
         private void ParseMataData()
         {
-            StreamReader streamWriter = new StreamReader(CSVEditorWindowStrings.META_DATA_FILE_NAME);
+            StreamReader streamWriter = new StreamReader(CSVEditorWindowConsts.META_DATA_FILE_NAME);
             while(true)
             {
                 if(streamWriter.EndOfStream)
@@ -87,12 +87,12 @@ namespace CSVEditor
 
                 string line = streamWriter.ReadLine();
                 string[] parts = line.Split(
-                    CSVEditorWindowStrings.META_DATA_FILE_PARAMETER_SEPARATORS,
+                    CSVEditorWindowConsts.META_DATA_FILE_PARAMETER_SEPARATORS,
                     StringSplitOptions.None);
 
                 switch(parts[0])
                 {
-                    case CSVEditorWindowStrings.PATH_MARKER:
+                    case CSVEditorWindowConsts.PATH_MARKER:
                         _recentlyOpenedFiles.Add(parts[1]);
                         break;
                 }
@@ -102,13 +102,13 @@ namespace CSVEditor
 
         private void WriteMetaData()
         {
-            StreamWriter streamWriter = new StreamWriter(CSVEditorWindowStrings.META_DATA_FILE_NAME);
+            StreamWriter streamWriter = new StreamWriter(CSVEditorWindowConsts.META_DATA_FILE_NAME);
             for (int i = 0; i < _recentlyOpenedFiles.Count; i++)
             {
                 string line = string.Format("{0}={1}{2}",
-                    CSVEditorWindowStrings.PATH_MARKER, 
+                    CSVEditorWindowConsts.PATH_MARKER, 
                     _recentlyOpenedFiles[i],
-                    CSVEditorWindowStrings.ROW_SEPARATORS[0]);
+                    CSVEditorWindowConsts.ROW_SEPARATORS[0]);
                 streamWriter.Write(line);
             }
             streamWriter.Close();

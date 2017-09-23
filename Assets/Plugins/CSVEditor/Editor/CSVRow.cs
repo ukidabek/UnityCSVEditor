@@ -34,17 +34,18 @@ namespace CSVEditor
             }
         }
 
-        public void EditRow(Rect rowRect, int index)
+        public void EditRow(Rect rowRect, int index, ref List<int> columnSizes)
         {
+            Rect newRect = new Rect();
+            newRect.y = rowRect.y;
             for (int i = 0; i < _columns.Count; i++)
             {
-                Rect newRect = new Rect();
-                newRect.x = rowRect.width * i;
-                newRect.y = rowRect.y;
-                newRect.width = rowRect.width;
+                newRect.width = columnSizes[i];
                 newRect.height = rowRect.height;
 
                 _columns[i].EditValue(newRect);
+                newRect.x += newRect.width;
+                newRect.x += 5;
             }
         }
 
@@ -55,11 +56,11 @@ namespace CSVEditor
             for (int i = 0; i < _columns.Count; i++)
             {
                 string value = _columns[i].GetValue();
-                line += string.Format("{0}{1}", value, CSVEditorWindowStrings.COLUMN_SEPARATORS[0]);
+                line += string.Format("{0}{1}", value, CSVEditorWindowConsts.COLUMN_SEPARATORS[0]);
 
                 if(i == _columns.Count -1)
                 {
-                    line = string.Format("{0}{1}", line, CSVEditorWindowStrings.ROW_SEPARATORS[0]);
+                    line = string.Format("{0}{1}", line, CSVEditorWindowConsts.ROW_SEPARATORS[0]);
                 }
             }
 
