@@ -16,7 +16,7 @@
         #endregion
 
         public const int COLUMN_RESIZE_RECT_WIDTCH = 5;
-        public const int ROW_RESIZE_RECT_WIDTCH = 5;
+        public const int ROW_RESIZE_RECT_HEIGHT = 5;
 
     }
 }

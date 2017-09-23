@@ -12,9 +12,15 @@ namespace CSVEditor
         private List<int> _rowSize = new List<int>();
 
         private int _columnToResizeIndex = 0;
+        private int _rowToResizeIndex = 0;
         private bool _reSizeColumn = false;
+        private bool _reSizeRow = false;
+
+        int firstIndex = -1;
+        int lastIndex = 0;
 
         private List<Rect> _columnResizeRectList = new List<Rect>();
+        private List<Rect> _rowResizeRectList = new List<Rect>();
 
         private Vector2 scrollPosition = Vector2.zero;
         private Rect windowRect = Rect.zero;
@@ -54,7 +60,7 @@ namespace CSVEditor
                 _totalRowsLenght += _rowSize[i];
             }
 
-            _totalRowsLenght += CSVEditorWindowConsts.ROW_RESIZE_RECT_WIDTCH * _rowSize.Count;
+            _totalRowsLenght += CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT * _rowSize.Count;
 
             _columnResizeRectList.Clear();
             int totalWidtch = 0;
@@ -69,7 +75,21 @@ namespace CSVEditor
                 totalWidtch += _columnSize[i];
             }
 
+            totalWidtch += CSVEditorWindowConsts.COLUMN_RESIZE_RECT_WIDTCH * _parser.ColumnsCount;
+
             windowScrollRect = new Rect(Vector2.zero, new Vector2(totalWidtch, _totalRowsLenght));
+
+            _totalRowsLenght = 0;
+            _rowResizeRectList.Clear();
+            for (int i = 0; i < _rowSize.Count; i++)
+            {
+                _rowResizeRectList.Add(new Rect(
+                    0,
+                    _totalRowsLenght + _rowSize[i] + (CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT * i),
+                    totalWidtch,
+                    CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT));
+                _totalRowsLenght += _rowSize[i];
+            }
 
         }
 
@@ -82,13 +102,24 @@ namespace CSVEditor
                 case EventType.MouseDown:
                     if(Event.current.button == 0)
                     {
+                        Rect mouseRect = new Rect(Event.current.mousePosition, Vector2.one);
+
                         for (int i = 0; i < _columnResizeRectList.Count; i++)
                         {
-                            Rect mouseRect = new Rect(Event.current.mousePosition, Vector2.one);
                             if(_columnResizeRectList[i].Overlaps(mouseRect))
                             {
                                 _columnToResizeIndex = i;
                                 _reSizeColumn = true;
+                            }
+                        }
+
+                        for (int i = firstIndex; i < lastIndex; i++)
+                        {
+                            Rect rr = _rowResizeRectList[i];
+                            if (_rowResizeRectList[i].Overlaps(mouseRect))
+                            {
+                                _rowToResizeIndex = i;
+                                _reSizeRow = true;
                             }
                         }
                     }
@@ -99,6 +130,8 @@ namespace CSVEditor
                     if (Event.current.button == 0)
                     {
                         _reSizeColumn = false;
+                        _reSizeRow = false;
+
                         CalculateReSizeRects();
                     }
                     break;
@@ -109,18 +142,36 @@ namespace CSVEditor
                         _columnSize[_columnToResizeIndex] += (int)Event.current.delta.x;
                         Event.current.Use();
                     }
+
+                    if (_reSizeRow && Event.current.button == 0)
+                    {
+                        _rowSize[_rowToResizeIndex] += (int)Event.current.delta.y;
+                        Event.current.Use();
+                    }
                     break;
             }
 
             scrollPosition = GUI.BeginScrollView(windowRect, scrollPosition, windowScrollRect, false, false);
             {
+                firstIndex = -1;
+                lastIndex = 0;
+                int rowPosition = 0;
                 for (int i = 0; i < _parser.RowsCount; i++)
                 {
-                    Rect rect = new Rect(new Vector2(0, 20 * i), new Vector2(100, 20));
-                    if (scrollPosition.y <= rect.y + 20 && (scrollPosition.y + Screen.height - 40) >= rect.y)
+                    Rect rect = new Rect(new Vector2(0, rowPosition), new Vector2(0, _rowSize[i]));
+                    if (scrollPosition.y <= rect.y + _rowSize[i] && (scrollPosition.y + Screen.height) >= rect.y)
                     {
+                        if(firstIndex < 0)
+                        {
+                            firstIndex = i;
+                        }
+
+                        lastIndex = i;
+
                         _parser.Rows[i].EditRow(rect, i, ref _columnSize);
                     }
+
+                    rowPosition += _rowSize[i] + CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT;
                 }
             }
             GUI.EndScrollView();
