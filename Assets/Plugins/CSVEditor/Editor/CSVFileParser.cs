@@ -64,6 +64,28 @@ namespace CSVEditor
             }
         }
 
+        public void AddColumn()
+        {
+            if(AddColumnAction != null)
+            {
+                AddColumnAction();
+                ColumnsCount++;
+            }
+        }
+
+        public void AddRow()
+        {
+            CSVRow newRow = new CSVRow(ColumnsCount);
+
+            AddColumnAction -= newRow.AddColumn;
+            AddColumnAction += newRow.AddColumn;
+
+            ReziseRowAction -= newRow.ResizeRow;
+            ReziseRowAction += newRow.ResizeRow;
+
+            Rows.Add(newRow);
+        }
+
         public void ToCSV()
         {
             ToCSV(_path);

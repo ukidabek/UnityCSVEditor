@@ -11,6 +11,14 @@ namespace CSVEditor
         public Rect test = new Rect();
         private List<CSVColumn> _columns = new List<CSVColumn>();
 
+        public CSVRow(int length)
+        {
+            for (int i = 0; i < length; i++)
+            {
+                AddColumn();
+            }
+        }
+
         public CSVRow(string[]columns)
         {
             for (int i = 0; i < columns.Length; i++)

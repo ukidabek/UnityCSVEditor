@@ -16,8 +16,8 @@ namespace CSVEditor
         private bool _reSizeColumn = false;
         private bool _reSizeRow = false;
 
-        int _firstIndex = -1;
-        int _lastIndex = 0;
+        private int _firstIndex = -1;
+        private int _lastIndex = 0;
 
         private List<Rect> _columnResizeRectList = new List<Rect>();
         private List<Rect> _rowResizeRectList = new List<Rect>();
@@ -28,12 +28,18 @@ namespace CSVEditor
 
         private CSVFileParser _parser = null;
 
+        private GenericMenu _contextMenu = new GenericMenu();
+
         public CSVEditorEditWindow(CSVFileParser parser)
         {
             _parser = parser;
-            GUIContent titleContent = new GUIContent(_parser.FileName);
+            this.wantsMouseMove = true;
 
+            GUIContent titleContent = new GUIContent(_parser.FileName);
             this.titleContent = titleContent;
+
+            _contextMenu.AddItem(new GUIContent("Add/Column"), false, AddColumn);
+            _contextMenu.AddItem(new GUIContent("Add/Row"), false, AddRow);
 
             for (int i = 0; i < _parser.ColumnsCount; i++)
             {
@@ -45,9 +51,7 @@ namespace CSVEditor
                 _rowSize.Add(CSVEditorWindowConsts.DEFAULT_ROW_HEIGHT);
             }
 
-            this.wantsMouseMove = true;
             CalculateReSizeRects();
-
         }
 
         private void CalculateReSizeRects()
@@ -89,13 +93,23 @@ namespace CSVEditor
                     CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT));
                 _totalRowsLenght += _rowSize[i];
             }
+        }
 
+        public void AddColumn()
+        {
+            _parser.AddColumn();
+            _columnSize.Add(CSVEditorWindowConsts.DEFAULT_COLUMN_WIDTH);
+        }
+
+        public void AddRow()
+        {
+            _parser.AddRow();
+            _rowSize.Add(CSVEditorWindowConsts.DEFAULT_ROW_HEIGHT);
         }
 
         private void OnGUI()
         {
-
-            if(GUI.Button(CSVEditorWindowConsts.SAVE_BUTTON_RECT, "Save"))
+            if(GUI.Button(CSVEditorWindowConsts.SAVE_BUTTON_RECT, CSVEditorWindowConsts.SAVE_BUTTON_TEXT))
             {
                 _parser.ToCSV();
             }
@@ -133,7 +147,10 @@ namespace CSVEditor
                             }
                         }
                     }
-                    
+                    if (Event.current.button == 1)
+                    {
+                        _contextMenu.ShowAsContext();
+                    }
                     break;
 
                 case EventType.MouseUp:
@@ -166,11 +183,6 @@ namespace CSVEditor
                 _firstIndex = -1;
                 _lastIndex = 0;
                 int rowPosition = 0;
-
-                //for (int i = 0; i < _columnResizeRectList.Count; i++)
-                //{
-                //    GUI.Button(_columnResizeRectList[i], string.Empty);
-                //}
 
                 for (int i = 0; i < _parser.RowsCount; i++)
                 {

@@ -11,17 +11,21 @@ namespace CSVEditor
     public class CSVEditorMainWindow : EditorWindow
     {
         private TextAsset _csvFile = null;
-        private CSVFileParser _parser = new CSVFileParser();
         private List<string> _recentlyOpenedFiles = new List<string>();
 
-        [MenuItem("Window/CSV Editor")]
-        private static void Init()
+        [MenuItem(CSVEditorWindowConsts.CSV_EDITOR_MAIN_WINDOW_MENU_ITEM)]
+        private static void OpenMainWindow()
         {
             CSVEditorMainWindow window = (CSVEditorMainWindow)GetWindow(typeof(CSVEditorMainWindow));
             GUIContent titleContent = new GUIContent(CSVEditorWindowConsts.CSV_EDITOR_WINDOW_TITLE);
 
             window.titleContent = titleContent;
             window.Show();
+        }
+
+        [MenuItem(CSVEditorWindowConsts.CSV_EDITOR_NEW_FILE_MENU_ITEM)]
+        private static void CreateNewCSVFile()
+        {
         }
 
         public CSVEditorMainWindow()
@@ -69,6 +73,8 @@ namespace CSVEditor
                 }
             }
 
+            CSVFileParser _parser = new CSVFileParser();
+
             _parser.FromCSV(path);
 
             CSVEditorEditWindow window = new CSVEditorEditWindow(_parser);
@@ -105,7 +111,8 @@ namespace CSVEditor
             StreamWriter streamWriter = new StreamWriter(CSVEditorWindowConsts.META_DATA_FILE_NAME);
             for (int i = 0; i < _recentlyOpenedFiles.Count; i++)
             {
-                string line = string.Format("{0}={1}{2}",
+                string line = string.Format(
+                    CSVEditorWindowConsts.MATA_DATA_PARAMETR_FORMAT,
                     CSVEditorWindowConsts.PATH_MARKER, 
                     _recentlyOpenedFiles[i],
                     CSVEditorWindowConsts.ROW_SEPARATORS[0]);
