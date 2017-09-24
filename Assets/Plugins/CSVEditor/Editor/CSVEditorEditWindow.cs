@@ -16,8 +16,8 @@ namespace CSVEditor
         private bool _reSizeColumn = false;
         private bool _reSizeRow = false;
 
-        int firstIndex = -1;
-        int lastIndex = 0;
+        int _firstIndex = -1;
+        int _lastIndex = 0;
 
         private List<Rect> _columnResizeRectList = new List<Rect>();
         private List<Rect> _rowResizeRectList = new List<Rect>();
@@ -37,13 +37,12 @@ namespace CSVEditor
 
             for (int i = 0; i < _parser.ColumnsCount; i++)
             {
-                _columnSize.Add(100);
+                _columnSize.Add(CSVEditorWindowConsts.DEFAULT_COLUMN_WIDTH);
             }
-
 
             for (int i = 0; i < _parser.RowsCount; i++)
             {
-                _rowSize.Add(20);
+                _rowSize.Add(CSVEditorWindowConsts.DEFAULT_ROW_HEIGHT);
             }
 
             this.wantsMouseMove = true;
@@ -60,7 +59,7 @@ namespace CSVEditor
                 _totalRowsLenght += _rowSize[i];
             }
 
-            _totalRowsLenght += CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT * _rowSize.Count;
+            _totalRowsLenght += CSVEditorWindowConsts.ROW_RESIZE_RECT_HEIGHT * _rowSize.Count + CSVEditorWindowConsts.FOR_MENU_GAP;
 
             _columnResizeRectList.Clear();
             int totalWidtch = 0;
@@ -79,7 +78,7 @@ namespace CSVEditor
 
             windowScrollRect = new Rect(Vector2.zero, new Vector2(totalWidtch, _totalRowsLenght));
 
-            _totalRowsLenght = 0;
+            _totalRowsLenght = CSVEditorWindowConsts.FOR_MENU_GAP;
             _rowResizeRectList.Clear();
             for (int i = 0; i < _rowSize.Count; i++)
             {
@@ -95,7 +94,15 @@ namespace CSVEditor
 
         private void OnGUI()
         {
-            windowRect = new Rect(new Vector2(0, 0), new Vector2(Screen.width, Screen.height - 22));
+
+            if(GUI.Button(CSVEditorWindowConsts.SAVE_BUTTON_RECT, "Save"))
+            {
+                _parser.ToCSV();
+            }
+
+            windowRect = new Rect(
+                new Vector2(0, CSVEditorWindowConsts.FOR_MENU_GAP), 
+                new Vector2(Screen.width, Screen.height - CSVEditorWindowConsts.FOR_VERTICAL_SCROLL_BAR_GAP));
 
             switch(Event.current.type)
             {
@@ -113,7 +120,10 @@ namespace CSVEditor
                             }
                         }
 
-                        for (int i = firstIndex; i < lastIndex; i++)
+                        mouseRect.x += scrollPosition.x;
+                        mouseRect.y += scrollPosition.y;
+
+                        for (int i = _firstIndex; i < _lastIndex; i++)
                         {
                             Rect rr = _rowResizeRectList[i];
                             if (_rowResizeRectList[i].Overlaps(mouseRect))
@@ -153,20 +163,26 @@ namespace CSVEditor
 
             scrollPosition = GUI.BeginScrollView(windowRect, scrollPosition, windowScrollRect, false, false);
             {
-                firstIndex = -1;
-                lastIndex = 0;
+                _firstIndex = -1;
+                _lastIndex = 0;
                 int rowPosition = 0;
+
+                //for (int i = 0; i < _columnResizeRectList.Count; i++)
+                //{
+                //    GUI.Button(_columnResizeRectList[i], string.Empty);
+                //}
+
                 for (int i = 0; i < _parser.RowsCount; i++)
                 {
                     Rect rect = new Rect(new Vector2(0, rowPosition), new Vector2(0, _rowSize[i]));
                     if (scrollPosition.y <= rect.y + _rowSize[i] && (scrollPosition.y + Screen.height) >= rect.y)
                     {
-                        if(firstIndex < 0)
+                        if(_firstIndex < 0)
                         {
-                            firstIndex = i;
+                            _firstIndex = i;
                         }
 
-                        lastIndex = i;
+                        _lastIndex = i;
 
                         _parser.Rows[i].EditRow(rect, i, ref _columnSize);
                     }

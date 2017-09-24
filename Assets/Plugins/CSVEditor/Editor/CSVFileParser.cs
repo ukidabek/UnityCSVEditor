@@ -19,8 +19,12 @@ namespace CSVEditor
         private List<CSVRow> _rows = new List<CSVRow>();
         public List<CSVRow> Rows { get { return _rows; } }
 
+        private string _path = string.Empty;
+
         public void FromCSV(string path)
         {
+            _path = path;
+
             string[] pathPart = path.Split(CSVEditorWindowConsts.PATH_SEPARATORS, StringSplitOptions.None);
             FileName = pathPart[pathPart.Length - 1];
 
@@ -62,7 +66,19 @@ namespace CSVEditor
 
         public void ToCSV()
         {
-            
+            ToCSV(_path);
+        }
+
+        public void ToCSV(string path)
+        {
+            StreamWriter streamWriter = new StreamWriter(path);
+
+            for (int i = 0; i < Rows.Count; i++)
+            {
+                streamWriter.Write(Rows[i].ToString());
+            }
+
+            streamWriter.Close();
         }
     }
 }
