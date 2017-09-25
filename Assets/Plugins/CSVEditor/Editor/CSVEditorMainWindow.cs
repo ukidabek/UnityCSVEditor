@@ -39,7 +39,9 @@ namespace CSVEditor
             {
                 _csvFile = (TextAsset)EditorGUILayout.ObjectField(_csvFile, typeof(TextAsset), false);
 
-                if (GUILayout.Button("Open", GUILayout.Width(100)))
+                if (GUILayout.Button(
+                    CSVEditorWindowConsts.OPEN_BUTTON_TEXT,
+                    GUILayout.Width(CSVEditorWindowConsts.DEFAULT_BUTTON_WIDTCH)))
                 {
                     string path = AssetDatabase.GetAssetPath(_csvFile);
                     OpenEditWindow(path);

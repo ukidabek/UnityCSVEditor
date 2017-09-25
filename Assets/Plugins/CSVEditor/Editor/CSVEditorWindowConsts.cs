@@ -22,6 +22,7 @@ namespace CSVEditor
 
         public const string MATA_DATA_PARAMETR_FORMAT = "{0}={1}{2}";
 
+        public const string OPEN_BUTTON_TEXT = "Open";
         public const string SAVE_BUTTON_TEXT = "Save";
 
         #endregion
@@ -35,6 +36,8 @@ namespace CSVEditor
         public const int FOR_MENU_GAP = 20;
         public const int FOR_VERTICAL_SCROLL_BAR_GAP = 42;
 
-        public static readonly Rect SAVE_BUTTON_RECT = new Rect(Vector2.zero, new Vector2(100, FOR_MENU_GAP));
+        public const int DEFAULT_BUTTON_WIDTCH = 100;
+
+        public static readonly Rect SAVE_BUTTON_RECT = new Rect(Vector2.zero, new Vector2(DEFAULT_BUTTON_WIDTCH, FOR_MENU_GAP));
     }
 }

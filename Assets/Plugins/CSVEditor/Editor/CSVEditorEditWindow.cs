@@ -13,8 +13,11 @@ namespace CSVEditor
 
         private int _columnToResizeIndex = 0;
         private int _rowToResizeIndex = 0;
+
         private bool _reSizeColumn = false;
         private bool _reSizeRow = false;
+        private bool _insertColumn = false;
+        private bool _insertRow = false;
 
         private int _firstIndex = -1;
         private int _lastIndex = 0;
@@ -29,6 +32,8 @@ namespace CSVEditor
         private CSVFileParser _parser = null;
 
         private GenericMenu _contextMenu = new GenericMenu();
+        private GenericMenu _insertRowContextMenu = new GenericMenu();
+        private GenericMenu _insertColumnContextMenu = new GenericMenu();
 
         public CSVEditorEditWindow(CSVFileParser parser)
         {
@@ -40,6 +45,9 @@ namespace CSVEditor
 
             _contextMenu.AddItem(new GUIContent("Add/Column"), false, AddColumn);
             _contextMenu.AddItem(new GUIContent("Add/Row"), false, AddRow);
+
+            _insertRowContextMenu.AddItem(new GUIContent("Insert/Row"), false, InsertRow);
+            _insertColumnContextMenu.AddItem(new GUIContent("Insert/Column"), false, InsertColumn);
 
             for (int i = 0; i < _parser.ColumnsCount; i++)
             {
@@ -107,6 +115,47 @@ namespace CSVEditor
             _rowSize.Add(CSVEditorWindowConsts.DEFAULT_ROW_HEIGHT);
         }
 
+        public void InsertRow()
+        {
+            _insertRow = false;
+            _parser.InsertRow(_rowToResizeIndex + 1);
+            _rowSize.Insert(_rowToResizeIndex + 1, CSVEditorWindowConsts.DEFAULT_ROW_HEIGHT);
+        }
+
+        public void InsertColumn()
+        {
+            _insertRow = false;
+            _parser.InsertColumn(_columnToResizeIndex + 1);
+            _columnSize.Insert(_columnToResizeIndex + 1, CSVEditorWindowConsts.DEFAULT_COLUMN_WIDTH);
+        }
+
+        private void CheckReSizeRectHit(Vector2 mousePosition, ref bool row, ref bool column)
+        {
+            Rect mouseRect = new Rect(mousePosition, Vector2.one);
+
+            for (int i = 0; i < _columnResizeRectList.Count; i++)
+            {
+                if (_columnResizeRectList[i].Overlaps(mouseRect))
+                {
+                    _columnToResizeIndex = i;
+                    column = true;
+                }
+            }
+
+            mouseRect.x += scrollPosition.x;
+            mouseRect.y += scrollPosition.y;
+
+            for (int i = _firstIndex; i < _lastIndex; i++)
+            {
+                Rect rr = _rowResizeRectList[i];
+                if (_rowResizeRectList[i].Overlaps(mouseRect))
+                {
+                    _rowToResizeIndex = i;
+                    row = true;
+                }
+            }
+        }
+
         private void OnGUI()
         {
             if(GUI.Button(CSVEditorWindowConsts.SAVE_BUTTON_RECT, CSVEditorWindowConsts.SAVE_BUTTON_TEXT))
@@ -123,33 +172,25 @@ namespace CSVEditor
                 case EventType.MouseDown:
                     if(Event.current.button == 0)
                     {
-                        Rect mouseRect = new Rect(Event.current.mousePosition, Vector2.one);
-
-                        for (int i = 0; i < _columnResizeRectList.Count; i++)
-                        {
-                            if(_columnResizeRectList[i].Overlaps(mouseRect))
-                            {
-                                _columnToResizeIndex = i;
-                                _reSizeColumn = true;
-                            }
-                        }
-
-                        mouseRect.x += scrollPosition.x;
-                        mouseRect.y += scrollPosition.y;
-
-                        for (int i = _firstIndex; i < _lastIndex; i++)
-                        {
-                            Rect rr = _rowResizeRectList[i];
-                            if (_rowResizeRectList[i].Overlaps(mouseRect))
-                            {
-                                _rowToResizeIndex = i;
-                                _reSizeRow = true;
-                            }
-                        }
+                        CheckReSizeRectHit(Event.current.mousePosition, ref _reSizeRow, ref _reSizeColumn);
                     }
+
                     if (Event.current.button == 1)
                     {
-                        _contextMenu.ShowAsContext();
+                        CheckReSizeRectHit(Event.current.mousePosition, ref _insertRow, ref _insertColumn);
+
+                        if(_insertRow)
+                        {
+                            _insertRowContextMenu.ShowAsContext();
+                        }
+                        else if(_insertColumn)
+                        {
+                            _insertColumnContextMenu.ShowAsContext();
+                        }
+                        else
+                        {
+                            _contextMenu.ShowAsContext();
+                        }
                     }
                     break;
 

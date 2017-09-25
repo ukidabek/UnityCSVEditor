@@ -42,6 +42,12 @@ namespace CSVEditor
             }
         }
 
+        public void InsertColumn(int index)
+        {
+            CSVColumn newColumn = new CSVColumn(string.Empty);
+            _columns.Insert(index, newColumn);
+        }
+
         public void EditRow(Rect rowRect, int index, ref List<int> columnSizes)
         {
             Rect newRect = new Rect();

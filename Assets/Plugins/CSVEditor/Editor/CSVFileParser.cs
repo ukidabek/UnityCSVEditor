@@ -15,6 +15,7 @@ namespace CSVEditor
 
         private Action <int> ReziseRowAction = null;
         private Action AddColumnAction = null;
+        private Action<int> InsertColumnAction = null;
 
         private List<CSVRow> _rows = new List<CSVRow>();
         public List<CSVRow> Rows { get { return _rows; } }
@@ -41,15 +42,19 @@ namespace CSVEditor
 
                     string[] columns = line.Split(CSVEditorWindowConsts.COLUMN_SEPARATORS, StringSplitOptions.None);
 
-                    CSVRow newRow = new CSVRow(columns);
 
                     if (ColumnsCount < columns.Length)
                     {
                         ColumnsCount = columns.Length;
                     }
 
+                    CSVRow newRow = new CSVRow(columns);
+
                     AddColumnAction -= newRow.AddColumn;
                     AddColumnAction += newRow.AddColumn;
+
+                    InsertColumnAction -= newRow.InsertColumn;
+                    InsertColumnAction += newRow.InsertColumn;
 
                     ReziseRowAction -= newRow.ResizeRow;
                     ReziseRowAction += newRow.ResizeRow;
@@ -73,17 +78,43 @@ namespace CSVEditor
             }
         }
 
-        public void AddRow()
+        public void InsertColumn(int index)
+        {
+            if (InsertColumnAction != null)
+            {
+                InsertColumnAction(index);
+                ColumnsCount++;
+            }
+        }
+
+        public CSVRow CreateRow()
         {
             CSVRow newRow = new CSVRow(ColumnsCount);
 
             AddColumnAction -= newRow.AddColumn;
             AddColumnAction += newRow.AddColumn;
 
+            InsertColumnAction -= newRow.InsertColumn;
+            InsertColumnAction += newRow.InsertColumn;
+
             ReziseRowAction -= newRow.ResizeRow;
             ReziseRowAction += newRow.ResizeRow;
 
+            return newRow;
+        }
+
+        public void AddRow()
+        {
+            CSVRow newRow = CreateRow();
+
             Rows.Add(newRow);
+        }
+
+        public void InsertRow(int index)
+        { 
+            CSVRow newRow = CreateRow();
+
+            Rows.Insert(index, newRow);
         }
 
         public void ToCSV()
