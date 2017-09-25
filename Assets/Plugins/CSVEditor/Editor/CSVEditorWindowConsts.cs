@@ -27,6 +27,12 @@ namespace CSVEditor
 
         #endregion
 
+        public const string ADD_COLUMN_CONTEXT_MENU_ELEMENT = "Add/Column";
+        public const string ADD_ROW_CONTEXT_MENU_ELEMENT = "Add/Row";
+
+        public const string INSERT_COLUMN_CONTEXT_MENU_ELEMENT = "Insert/Column";
+        public const string INSERT_ROW_CONTEXT_MENU_ELEMENT = "Insert/Row";
+
         public const int DEFAULT_COLUMN_WIDTH = 100;
         public const int DEFAULT_ROW_HEIGHT = 20;
 

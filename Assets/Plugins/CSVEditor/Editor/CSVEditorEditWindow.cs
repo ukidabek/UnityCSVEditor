@@ -40,14 +40,18 @@ namespace CSVEditor
             _parser = parser;
             this.wantsMouseMove = true;
 
-            GUIContent titleContent = new GUIContent(_parser.FileName);
-            this.titleContent = titleContent;
+            GUIContent guiContent = new GUIContent(_parser.FileName);
+            this.titleContent = guiContent;
 
-            _contextMenu.AddItem(new GUIContent("Add/Column"), false, AddColumn);
-            _contextMenu.AddItem(new GUIContent("Add/Row"), false, AddRow);
+            guiContent = new GUIContent(CSVEditorWindowConsts.ADD_COLUMN_CONTEXT_MENU_ELEMENT);
+            _contextMenu.AddItem(guiContent, false, AddColumn);
+            guiContent = new GUIContent(CSVEditorWindowConsts.ADD_ROW_CONTEXT_MENU_ELEMENT);
+            _contextMenu.AddItem(guiContent, false, AddRow);
 
-            _insertRowContextMenu.AddItem(new GUIContent("Insert/Row"), false, InsertRow);
-            _insertColumnContextMenu.AddItem(new GUIContent("Insert/Column"), false, InsertColumn);
+            guiContent = new GUIContent(CSVEditorWindowConsts.INSERT_ROW_CONTEXT_MENU_ELEMENT);
+            _insertRowContextMenu.AddItem(guiContent, false, InsertRow);
+            guiContent = new GUIContent(CSVEditorWindowConsts.INSERT_COLUMN_CONTEXT_MENU_ELEMENT);
+            _insertColumnContextMenu.AddItem(guiContent, false, InsertColumn);
 
             for (int i = 0; i < _parser.ColumnsCount; i++)
             {
@@ -191,6 +195,9 @@ namespace CSVEditor
                         {
                             _contextMenu.ShowAsContext();
                         }
+
+                        _insertRow = false;
+                        _insertColumn = false;
                     }
                     break;
 
